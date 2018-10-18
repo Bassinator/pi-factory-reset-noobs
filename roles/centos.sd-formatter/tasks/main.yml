@@ -1,0 +1,56 @@
+---
+- set_fact:
+    real_ansible_host: "{{ ansible_host }}"
+
+- name: install os packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ packages }}"
+
+
+- name: Read device information
+  parted: device=/dev/sdb unit=MiB
+  register: sdb_info
+
+- name: get mountpoints of mounted partitions
+  shell: mount | awk '/sdb/{print $3}'
+  register: mountpoints
+
+- debug:
+    var: mountpoints
+
+- name: unmount all partitions
+  mount:
+    path: '{{ item }}'
+    state: unmounted
+  with_items: "{{ mountpoints.stdout_lines }}"
+
+- name: Remove all partitions from disk
+  parted:
+    device: /dev/sdb
+    number: "{{ item.num }}"
+    state: absent
+  with_items: "{{ sdb_info.partitions }}"
+
+- name: create one partition on sd card
+  parted:
+    device: /dev/sdb
+    number: 1
+    flags:
+        - lba # does actually not work need to add shell command
+    part_start: 4194KiB
+    state: present
+
+- name: create vfat filesystem on sd card
+  filesystem:
+    fstype: vfat
+    dev: /dev/sdb1
+
+- name: mount sd card
+  mount:
+   path: /mnt/NOOBS
+   src: /dev/sdb1
+   fstype: vfat
+   state: mounted
+  

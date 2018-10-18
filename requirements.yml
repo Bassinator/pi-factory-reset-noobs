@@ -1,0 +1,5 @@
+# install_roles.yml
+
+# from github
+- src: https://github.com/Bassinator/centos.squid.git
+

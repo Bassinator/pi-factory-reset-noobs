@@ -1,0 +1,35 @@
+---
+- name: install os packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ os_packages }}"
+
+- name: configure autostart of squid with supervisord
+  blockinfile:
+    path: /etc/supervisord.conf
+    block: |
+      [program:squid]
+      command=/usr/sbin/squid -N &
+  register: supervisord
+
+- name: start incrond via supervisord
+  command: supervisorctl update
+  when: supervisord.changed
+
+- name: set cache_dir to /Vagrant
+  lineinfile:
+    path: /etc/squid/squid.config
+    insertafter: '^#cache_dir '
+    line: cache_dir ufs /vagrant/squid 3072 16 256
+  register: squidconf
+
+- name: Set max filesize to cache
+  lineinfile:
+    path: /etc/squid/squid.config
+    inserbefore: '^cache_dir ufs /vagrant/squid 100 16 256'
+    line: maximum_object_size 100 MB
+
+- name: create cache directories
+  command: squid -z
+  when: squidconf.changed

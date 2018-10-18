@@ -1,0 +1,7 @@
+---
+- name: Playbook to provision vm as a raspbian sd card formatter
+
+  hosts: all
+  roles:
+    # - { role: centos.sd-formatter }
+    - { role: centos.noobs-prepare}
