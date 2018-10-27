@@ -1,5 +1,5 @@
-# install_roles.yml
-
-# from github
-- src: https://github.com/Bassinator/centos.squid.git
-
+---
+- name: pi-reset
+#  src: https://github.com/Bassinator/ansible-role-pi-reset.git
+  src: git@github.com:Bassinator/ansible-role-pi-reset.git
+  scm: git

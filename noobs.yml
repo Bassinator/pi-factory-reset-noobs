@@ -4,4 +4,4 @@
   hosts: all
   roles:
     # - { role: centos.sd-formatter }
-    - { role: centos.noobs-prepare}
+    - { role: bassinator.pi-reset}

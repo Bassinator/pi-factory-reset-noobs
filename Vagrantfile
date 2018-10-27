@@ -11,12 +11,15 @@ Vagrant.configure("2") do |config|
       docker.has_ssh = true
     end
     proxy.vm.provision "ansible_local" do |provisioner|
+      provisioner.extra_vars = {
+        proxy_server_ip: stdout
+      }
       provisioner.verbose = "vvv"
       provisioner.playbook = "proxy.yml"
       provisioner.install = true
     end
   end
- 
+
   config.vm.define "formatter" do |formatter|
     formatter.vm.box = "centos/7"
     formatter.vm.synced_folder ".", "/vagrant", type: "virtualbox"
@@ -31,9 +34,11 @@ Vagrant.configure("2") do |config|
         "--product", "USB3.0-CRW"]
     end
     formatter.vm.provision "ansible_local" do |ansible|
+      ansible.verbose = "vvv"
       ansible.extra_vars = {
         proxy_server_ip: stdout.chop!
       }
+      ansible.galaxy_role_file = 'requirements.yml'
       ansible.playbook = "noobs.yml"
     end
   end
