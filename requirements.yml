@@ -1,5 +1,3 @@
 ---
-- name: pi-reset
-#  src: https://github.com/Bassinator/ansible-role-pi-reset.git
-  src: git@github.com:Bassinator/ansible-role-pi-reset.git
-  scm: git
+- src: bassinator.guest_additions
+- src: bassinator.pi_reset

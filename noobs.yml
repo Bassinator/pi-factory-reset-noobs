@@ -3,5 +3,7 @@
 
   hosts: all
   roles:
+    - role: bassinator.guest_additions
+      virtualbox_version: 6.0.4
     # - { role: centos.sd-formatter }
-    - { role: bassinator.pi-reset}
+    - { role: bassinator.pi_reset }
